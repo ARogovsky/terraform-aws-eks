@@ -45,7 +45,7 @@ output "cluster_iam_role_arn" {
 
 output "cluster_oidc_issuer_url" {
   description = "The URL on the EKS cluster OIDC Issuer"
-  value       = concat(aws_eks_cluster.this[*].identity[*].oidc.0.issuer, [""])[0]
+  value       = flatten(concat(aws_eks_cluster.this[*].identity[*].oidc.0.issuer, [""]))[0]
 }
 
 output "cloudwatch_log_group_name" {
@@ -61,6 +61,11 @@ output "kubeconfig" {
 output "kubeconfig_filename" {
   description = "The filename of the generated kubectl config."
   value       = concat(local_file.kubeconfig.*.filename, [""])[0]
+}
+
+output "oidc_provider_arn" {
+  description = "The ARN of the OIDC Provider if `enable_irsa = true`."
+  value       = var.enable_irsa ? concat(aws_iam_openid_connect_provider.oidc_provider[*].arn, [""])[0] : null
 }
 
 output "workers_asg_arns" {
@@ -148,12 +153,7 @@ output "worker_iam_role_arn" {
   )[0]
 }
 
-output "worker_autoscaling_policy_name" {
-  description = "Name of the worker autoscaling IAM policy if `manage_worker_autoscaling_policy = true`"
-  value       = concat(aws_iam_policy.worker_autoscaling[*].name, [""])[0]
-}
-
-output "worker_autoscaling_policy_arn" {
-  description = "ARN of the worker autoscaling IAM policy if `manage_worker_autoscaling_policy = true`"
-  value       = concat(aws_iam_policy.worker_autoscaling[*].arn, [""])[0]
+output "node_groups" {
+  description = "Outputs from EKS node groups. Map of maps, keyed by var.node_groups keys"
+  value       = module.node_groups.node_groups
 }
