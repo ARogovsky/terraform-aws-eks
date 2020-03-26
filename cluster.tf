@@ -70,6 +70,7 @@ resource "null_resource" "wait_for_cluster" {
     interpreter = var.wait_for_cluster_interpreter
     environment = {
       ENDPOINT = aws_eks_cluster.this[0].endpoint
+      EKS_NAME = aws_eks_cluster.this[0].name
     }
   }
 }

@@ -199,9 +199,9 @@ variable "cluster_delete_timeout" {
 }
 
 variable "wait_for_cluster_cmd" {
-  description = "Custom local-exec command to execute for determining if the eks cluster is healthy. Cluster endpoint will be available as an environment variable called ENDPOINT"
+  description = "Custom local-exec command to execute AWS API for wait eks cluster is active. Cluster name will be available as an environment variable called EKS_NAME"
   type        = string
-  default     = "for i in `seq 1 60`; do wget --no-check-certificate -O - -q $ENDPOINT/healthz >/dev/null && exit 0 || true; sleep 5; done; echo TIMEOUT && exit 1"
+  default     = "aws eks wait cluster-active --name $EKS_NAME"
 }
 
 variable "wait_for_cluster_interpreter" {
