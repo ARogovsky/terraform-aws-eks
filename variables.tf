@@ -201,7 +201,7 @@ variable "cluster_delete_timeout" {
 variable "wait_for_cluster_cmd" {
   description = "Custom local-exec command to execute AWS API for wait eks cluster is active. Cluster name will be available as an environment variable called EKS_NAME"
   type        = string
-  default     = "aws eks wait cluster-active --name $EKS_NAME"
+  default     = "for i in `seq 1 20`; aws eks wait cluster-active --name $EKS_NAME >/dev/null && exit 0 || true; sleep 1; done; echo TIMEOUT && exit 1"
 }
 
 variable "wait_for_cluster_interpreter" {
